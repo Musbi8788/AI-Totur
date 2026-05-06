@@ -1,308 +1,604 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Musbi - Your Tech Guide</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Musbi - AI Programming Mentor</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
+      :root {
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --bg: #0f172a;
+        --sidebar-bg: #1e293b;
+        --card-bg: #1e293b;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --glass: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+      }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+      }
 
-        header {
-            padding: 1.5rem 2rem;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+      /* --- AUTH SCREEN --- */
+      #auth-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--bg);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        .header-left h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
-            background: linear-gradient(to right, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+      .auth-card {
+        background: var(--card-bg);
+        padding: 2.5rem;
+        border-radius: 1.5rem;
+        width: 100%;
+        max-width: 400px;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+      .auth-card h2 {
+        font-family: "Outfit", sans-serif;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        background: linear-gradient(to right, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
 
-        .upload-label {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+      .auth-card input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        background: var(--glass);
+        border: 1px solid var(--glass-border);
+        border-radius: 0.75rem;
+        color: white;
+        outline: none;
+      }
 
-        .upload-label:hover {
-            background: var(--glass-border);
-            color: var(--text);
-            border-color: var(--primary);
-        }
+      .auth-card button {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 0.5rem;
+      }
 
-        #chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            scroll-behavior: smooth;
-        }
+      .auth-toggle {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        cursor: pointer;
+      }
 
-        .message {
-            max-width: 80%;
-            padding: 1rem 1.5rem;
-            border-radius: 1.25rem;
-            line-height: 1.6;
-            animation: fadeIn 0.3s ease-out;
-            white-space: pre-wrap;
-        }
+      .auth-toggle span {
+        color: var(--primary);
+        font-weight: 600;
+      }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+      /* --- MAIN LAYOUT --- */
+      #sidebar {
+        width: 260px;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+      }
 
-        .user-message {
-            align-self: flex-end;
-            background: var(--primary);
-            color: white;
-            border-bottom-right-radius: 0.25rem;
-        }
+      .new-chat-btn {
+        background: var(--glass);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        transition: all 0.2s;
+      }
 
-        .ai-message {
-            align-self: flex-start;
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-bottom-left-radius: 0.25rem;
-        }
+      .new-chat-btn:hover {
+        background: var(--glass-border);
+      }
 
-        .system-message {
-            align-self: center;
-            background: transparent;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            border: none;
-            padding: 0.5rem;
-        }
+      .chat-list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-        .input-area {
-            padding: 2rem;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--glass-border);
-        }
+      .chat-item {
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--text-muted);
+        transition: all 0.2s;
+      }
 
-        .input-wrapper {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            gap: 1rem;
-            background: var(--card-bg);
-            padding: 0.5rem;
-            border-radius: 1rem;
-            border: 1px solid var(--glass-border);
-            transition: border-color 0.3s;
-        }
+      .chat-item:hover,
+      .chat-item.active {
+        background: var(--glass);
+        color: var(--text);
+      }
 
-        .input-wrapper:focus-within {
-            border-color: var(--primary);
-        }
+      .user-info {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+      }
 
-        input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text);
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            outline: none;
-        }
+      .logout-btn {
+        color: #f87171;
+        cursor: pointer;
+      }
 
-        button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-        }
+      #main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
 
-        button:hover {
-            background: var(--primary-hover);
-            transform: scale(1.05);
-        }
+      header {
+        padding: 1rem 2rem;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-        button:active {
-            transform: scale(0.95);
-        }
+      header h1 {
+        font-family: "Outfit", sans-serif;
+        font-size: 1.25rem;
+        background: linear-gradient(to right, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
 
-        .typing-indicator {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-            text-align: center;
-            display: none;
+      #chat-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        scroll-behavior: smooth;
+      }
+
+      .message {
+        max-width: 80%;
+        padding: 1rem 1.5rem;
+        border-radius: 1.25rem;
+        line-height: 1.6;
+        animation: fadeIn 0.3s ease-out;
+        white-space: pre-wrap;
+      }
+
+      .user-message {
+        align-self: flex-end;
+        background: var(--primary);
+        color: white;
+        border-bottom-right-radius: 0.25rem;
+      }
+
+      .ai-message {
+        align-self: flex-start;
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-bottom-left-radius: 0.25rem;
+      }
+
+      .system-message {
+        align-self: center;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        border: none;
+        padding: 0.5rem;
+      }
+
+      .input-area {
+        padding: 1.5rem 2rem;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--glass-border);
+      }
+
+      .input-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        align-items: flex-end;
+        gap: 1rem;
+        background: var(--card-bg);
+        padding: 0.5rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid var(--glass-border);
+      }
+
+      textarea {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--text);
+        padding: 0.75rem 0;
+        font-size: 1rem;
+        font-family: inherit;
+        outline: none;
+        resize: none;
+        max-height: 200px;
+        min-height: 24px;
+        line-height: 1.5;
+      }
+
+      button#send-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 0.25rem;
+      }
+
+      .input-tip {
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 0.5rem;
+      }
+
+      .typing-indicator {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        text-align: center;
+        display: none;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hidden {
+        display: none !important;
+      }
     </style>
-</head>
-<body>
-    <header>
-        <div class="header-left">
-            <h1>Musbi Chatbot</h1>
+  </head>
+  <body>
+    <!-- AUTH OVERLAY -->
+    <div id="auth-overlay">
+      <div class="auth-card" id="login-form">
+        <h2>Login to Musbi</h2>
+        <input type="email" id="login-email" placeholder="Email" />
+        <input type="password" id="login-password" placeholder="Password" />
+        <button onclick="handleAuth('login')">Login</button>
+        <div class="auth-toggle">
+          Don't have an account? <span onclick="toggleAuth()">Register</span>
         </div>
-        <div class="header-actions">
-            <label for="file-upload" class="upload-label">
-                <span>📁 Upload Knowledge</span>
-                <input type="file" id="file-upload" accept=".pdf,.txt" style="display: none;">
-            </label>
-            <div id="status" style="font-size: 0.875rem; color: #4ade80;">● Online</div>
+      </div>
+      <div class="auth-card hidden" id="register-form">
+        <h2>Join Musbi</h2>
+        <input type="email" id="register-email" placeholder="Email" />
+        <input type="password" id="register-password" placeholder="Password" />
+        <button onclick="handleAuth('register')">Register</button>
+        <div class="auth-toggle">
+          Already have an account? <span onclick="toggleAuth()">Login</span>
         </div>
-    </header>
-
-    <div id="chat-container">
-        <div class="message ai-message">
-            Hello! I'm Musbi, your tech guide. I'm an IT professional here to help you learn about technology and careers in tech. What's on your mind?
-        </div>
+      </div>
     </div>
 
-    <div class="input-area">
+    <!-- SIDEBAR -->
+    <div id="sidebar" class="hidden">
+      <button class="new-chat-btn" onclick="createNewChat()">
+        <span>+</span> New Chat
+      </button>
+      <div class="chat-list" id="chat-list">
+        <!-- Chats populated here -->
+      </div>
+      <div class="user-info">
+        <span id="user-display">user@example.com</span>
+        <span class="logout-btn" onclick="logout()">Logout</span>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content" class="hidden">
+      <header>
+        <h1>Musbi Mentorship</h1>
+        <div style="display: flex; gap: 1rem; align-items: center">
+          <label
+            for="file-upload"
+            style="cursor: pointer; font-size: 0.8rem; color: var(--text-muted)"
+          >
+            📁 Upload Doc
+            <input
+              type="file"
+              id="file-upload"
+              accept=".pdf,.txt"
+              style="display: none"
+            />
+          </label>
+          <div id="status" style="font-size: 0.8rem; color: #4ade80">
+            ● Online
+          </div>
+        </div>
+      </header>
+
+      <div id="chat-container">
+        <!-- Messages populated here -->
+      </div>
+
+      <div class="input-area">
         <div class="typing-indicator" id="typing">Musbi is thinking...</div>
         <div class="input-wrapper">
-            <input type="text" id="user-input" placeholder="Ask Musbi anything about tech..." autocomplete="off">
-            <button id="send-btn">Send</button>
+          <textarea
+            id="user-input"
+            placeholder="Ask Musbi anything..."
+            rows="1"
+          ></textarea>
+          <button id="send-btn">Send</button>
         </div>
+        <div class="input-tip">Enter to send, Shift + Enter for new line</div>
+      </div>
     </div>
 
     <script>
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const typingIndicator = document.getElementById('typing');
-        const fileUpload = document.getElementById('file-upload');
+      const authOverlay = document.getElementById("auth-overlay");
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("main-content");
+      const chatContainer = document.getElementById("chat-container");
+      const chatList = document.getElementById("chat-list");
+      const userInput = document.getElementById("user-input");
+      const sendBtn = document.getElementById("send-btn");
+      const typingIndicator = document.getElementById("typing");
+      const fileUpload = document.getElementById("file-upload");
+      const userDisplay = document.getElementById("user-display");
 
-        let chatHistory = [];
+      let token = localStorage.getItem("musbi_token");
+      let currentChatId = null;
 
-        async function sendMessage() {
-            const text = userInput.value.trim();
-            if (!text) return;
+      // --- AUTH LOGIC ---
+      function toggleAuth() {
+        document.getElementById("login-form").classList.toggle("hidden");
+        document.getElementById("register-form").classList.toggle("hidden");
+      }
 
-            // Add user message to UI
-            appendMessage('user', text);
-            userInput.value = '';
-            
-            chatHistory.push({ role: 'user', content: text });
+      async function handleAuth(type) {
+        const email = document.getElementById(`${type}-email`).value;
+        const password = document.getElementById(`${type}-password`).value;
 
-            // Show typing indicator
-            typingIndicator.textContent = "Musbi is thinking...";
-            typingIndicator.style.display = 'block';
-
-            try {
-                const response = await fetch('/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: chatHistory,
-                        model: "openai/gpt-3.5-turbo"
-                    })
-                });
-
-                if (!response.ok) throw new Error('Failed to connect to Musbi');
-
-                const data = await response.json();
-                appendMessage('ai', data.content);
-                chatHistory.push({ role: 'assistant', content: data.content });
-            } catch (error) {
-                appendMessage('ai', "I'm sorry, I'm having trouble connecting right now. Please check the server.");
-                console.error(error);
-            } finally {
-                typingIndicator.style.display = 'none';
-            }
-        }
-
-        fileUpload.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
+        try {
+          if (type === "register") {
+            const res = await fetch("/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+            if (!res.ok) throw await res.json();
+            alert("Registration successful! Please login.");
+            toggleAuth();
+          } else {
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append("username", email);
+            formData.append("password", password);
 
-            typingIndicator.textContent = `Processing ${file.name}...`;
-            typingIndicator.style.display = 'block';
-
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-                if (data.message) {
-                    appendMessage('system', data.message);
-                } else if (data.error) {
-                    appendMessage('ai', `Error: ${data.error}`);
-                }
-            } catch (error) {
-                appendMessage('ai', "Failed to upload document.");
-            } finally {
-                typingIndicator.textContent = "Musbi is thinking...";
-                typingIndicator.style.display = 'none';
-                fileUpload.value = '';
-            }
-        });
-
-        function appendMessage(role, content) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${role}-message`;
-            msgDiv.textContent = content;
-            chatContainer.appendChild(msgDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            const res = await fetch("/token", {
+              method: "POST",
+              body: formData,
+            });
+            if (!res.ok) throw await res.json();
+            const data = await res.json();
+            token = data.access_token;
+            localStorage.setItem("musbi_token", token);
+            initApp(email);
+          }
+        } catch (err) {
+          alert(err.detail || "Authentication failed");
         }
+      }
 
-        sendBtn.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+      function logout() {
+        localStorage.removeItem("musbi_token");
+        location.reload();
+      }
+
+      // --- APP LOGIC ---
+      async function initApp(email) {
+        authOverlay.classList.add("hidden");
+        sidebar.classList.remove("hidden");
+        mainContent.classList.remove("hidden");
+        userDisplay.textContent = email;
+        await loadChats();
+      }
+
+      async function loadChats() {
+        const res = await fetch("/chats", {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        const chats = await res.json();
+        chatList.innerHTML = "";
+        chats.forEach((chat) => {
+          const item = document.createElement("div");
+          item.className = `chat-item ${currentChatId === chat.id ? "active" : ""}`;
+          item.textContent = chat.title;
+          item.onclick = () => selectChat(chat.id);
+          chatList.appendChild(item);
+        });
+        if (chats.length > 0 && !currentChatId) {
+          selectChat(chats[0].id);
+        } else if (chats.length === 0) {
+          createNewChat();
+        }
+      }
+
+      async function createNewChat() {
+        const res = await fetch("/chats", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title: "New Chat" }),
+        });
+        const newChat = await res.json();
+        currentChatId = newChat.id;
+        await loadChats();
+        chatContainer.innerHTML =
+          "<div class=\"message ai-message\">Hello! I'm Musbi. I'm ready to help you learn and build. What are we working on today?</div>";
+      }
+
+      async function selectChat(chatId) {
+        currentChatId = chatId;
+        document
+          .querySelectorAll(".chat-item")
+          .forEach((i) => i.classList.remove("active"));
+        const activeItem = [...document.querySelectorAll(".chat-item")].find(
+          (i) => i.textContent === activeItem?.textContent,
+        ); // Simple highlight
+
+        chatContainer.innerHTML = "";
+        const res = await fetch(`/chats/${chatId}/messages`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const messages = await res.json();
+        messages.forEach((m) => appendMessage(m.role, m.content));
+        loadChats(); // Refresh to highlight correctly
+      }
+
+      async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message || !currentChatId) return;
+
+        appendMessage("user", message);
+        userInput.value = "";
+        userInput.style.height = "auto";
+
+        typingIndicator.style.display = "block";
+
+        try {
+          const res = await fetch("/chat", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ chat_id: currentChatId, message }),
+          });
+          const data = await res.json();
+          appendMessage("assistant", data.content);
+          await loadChats(); // Refresh title
+        } catch (err) {
+          appendMessage("ai", "Error connecting to Musbi. Try again.");
+        } finally {
+          typingIndicator.style.display = "none";
+        }
+      }
+
+      function appendMessage(role, content) {
+        const div = document.createElement("div");
+        div.className = `message ${role === "user" ? "user-message" : "ai-message"}`;
+        div.textContent = content;
+        chatContainer.appendChild(div);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+
+      // --- UI HELPERS ---
+      userInput.addEventListener("input", () => {
+        userInput.style.height = "auto";
+        userInput.style.height = userInput.scrollHeight + "px";
+      });
+
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      sendBtn.onclick = sendMessage;
+
+      fileUpload.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("file", file);
+        try {
+          const res = await fetch("/upload", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+          });
+          const data = await res.json();
+          appendMessage("system", data.message || data.error);
+        } catch (err) {
+          appendMessage("system", "Upload failed.");
+        }
+      };
+
+      // Auto-login check
+      if (token) {
+        // Simple check: fetch chats to see if token is valid
+        fetch("/chats", { headers: { Authorization: `Bearer ${token}` } }).then(
+          (res) => {
+            if (res.ok) initApp("Logged In");
+            else logout();
+          },
+        );
+      }
     </script>
-</body>
+  </body>
 </html>
