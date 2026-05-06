@@ -34,6 +34,13 @@
         height: 100vh;
         display: flex;
         overflow: hidden;
+        flex-direction: column; /* Stack on mobile */
+      }
+
+      @media (min-width: 768px) {
+        body {
+          flex-direction: row; /* Side-by-side on desktop */
+        }
       }
 
       /* --- AUTH SCREEN --- */
@@ -48,16 +55,23 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 1rem;
       }
 
       .auth-card {
         background: var(--card-bg);
-        padding: 2.5rem;
+        padding: 2rem;
         border-radius: 1.5rem;
         width: 100%;
         max-width: 400px;
         border: 1px solid var(--glass-border);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+
+      @media (min-width: 768px) {
+        .auth-card {
+          padding: 2.5rem;
+        }
       }
 
       .auth-card h2 {
@@ -67,22 +81,24 @@
         background: linear-gradient(to right, #818cf8, #c084fc);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        font-size: 1.5rem;
       }
 
       .auth-card input {
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.875rem 1rem;
         margin-bottom: 1rem;
         background: var(--glass);
         border: 1px solid var(--glass-border);
         border-radius: 0.75rem;
         color: white;
         outline: none;
+        font-size: 1rem; /* Prevent zoom on iOS */
       }
 
       .auth-card button {
         width: 100%;
-        padding: 0.75rem;
+        padding: 0.875rem;
         background: var(--primary);
         color: white;
         border: none;
@@ -90,6 +106,7 @@
         font-weight: 600;
         cursor: pointer;
         margin-top: 0.5rem;
+        min-height: 48px; /* Touch target */
       }
 
       .auth-toggle {
@@ -98,6 +115,7 @@
         font-size: 0.875rem;
         color: var(--text-muted);
         cursor: pointer;
+        padding: 0.5rem;
       }
 
       .auth-toggle span {
@@ -107,19 +125,59 @@
 
       /* --- MAIN LAYOUT --- */
       #sidebar {
-        width: 260px;
+        position: fixed;
+        top: 0;
+        left: -280px; /* Hidden by default on mobile */
+        width: 280px;
+        height: 100vh;
         background: var(--sidebar-bg);
         border-right: 1px solid var(--glass-border);
         display: flex;
         flex-direction: column;
         padding: 1rem;
+        z-index: 500;
+        transition: left 0.3s ease;
+      }
+
+      #sidebar.open {
+        left: 0;
+      }
+
+      @media (min-width: 768px) {
+        #sidebar {
+          position: static;
+          width: 260px;
+          left: 0;
+          height: auto;
+        }
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 400;
+      }
+
+      .sidebar-overlay.visible {
+        display: block;
+      }
+
+      @media (min-width: 768px) {
+        .sidebar-overlay {
+          display: none !important;
+        }
       }
 
       .new-chat-btn {
         background: var(--glass);
         border: 1px solid var(--glass-border);
         color: white;
-        padding: 0.75rem;
+        padding: 0.875rem;
         border-radius: 0.75rem;
         cursor: pointer;
         display: flex;
@@ -128,6 +186,7 @@
         font-weight: 500;
         margin-bottom: 1.5rem;
         transition: all 0.2s;
+        min-height: 48px;
       }
 
       .new-chat-btn:hover {
@@ -143,7 +202,7 @@
       }
 
       .chat-item {
-        padding: 0.75rem;
+        padding: 0.875rem;
         border-radius: 0.5rem;
         cursor: pointer;
         font-size: 0.875rem;
@@ -152,6 +211,7 @@
         text-overflow: ellipsis;
         color: var(--text-muted);
         transition: all 0.2s;
+        min-height: 44px;
       }
 
       .chat-item:hover,
@@ -168,11 +228,13 @@
         justify-content: space-between;
         align-items: center;
         font-size: 0.8rem;
+        min-height: 44px;
       }
 
       .logout-btn {
         color: #f87171;
         cursor: pointer;
+        padding: 0.5rem;
       }
 
       #main-content {
@@ -180,43 +242,93 @@
         display: flex;
         flex-direction: column;
         height: 100vh;
+        width: 100%;
       }
 
       header {
-        padding: 1rem 2rem;
+        padding: 0.75rem 1rem;
         background: var(--glass);
         backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--glass-border);
         display: flex;
         justify-content: space-between;
         align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      @media (min-width: 768px) {
+        header {
+          padding: 1rem 2rem;
+        }
+      }
+
+      .menu-toggle {
+        display: flex;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        margin-right: 0.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .menu-toggle {
+          display: none;
+        }
       }
 
       header h1 {
         font-family: "Outfit", sans-serif;
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         background: linear-gradient(to right, #818cf8, #c084fc);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        white-space: nowrap;
+      }
+
+      @media (min-width: 768px) {
+        header h1 {
+          font-size: 1.25rem;
+        }
       }
 
       #chat-container {
         flex: 1;
         overflow-y: auto;
-        padding: 2rem;
+        padding: 1rem;
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
         scroll-behavior: smooth;
       }
 
+      @media (min-width: 768px) {
+        #chat-container {
+          padding: 2rem;
+          gap: 1.5rem;
+        }
+      }
+
       .message {
-        max-width: 80%;
-        padding: 1rem 1.5rem;
+        max-width: 90%;
+        padding: 0.875rem 1.125rem;
         border-radius: 1.25rem;
-        line-height: 1.6;
+        line-height: 1.5;
         animation: fadeIn 0.3s ease-out;
         white-space: pre-wrap;
+        font-size: 0.95rem;
+      }
+
+      @media (min-width: 768px) {
+        .message {
+          max-width: 80%;
+          padding: 1rem 1.5rem;
+          font-size: 1rem;
+        }
       }
 
       .user-message {
@@ -237,16 +349,22 @@
         align-self: center;
         background: transparent;
         color: var(--text-muted);
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         border: none;
         padding: 0.5rem;
       }
 
       .input-area {
-        padding: 1.5rem 2rem;
+        padding: 1rem;
         background: var(--glass);
         backdrop-filter: blur(10px);
         border-top: 1px solid var(--glass-border);
+      }
+
+      @media (min-width: 768px) {
+        .input-area {
+          padding: 1.5rem 2rem;
+        }
       }
 
       .input-wrapper {
@@ -254,9 +372,9 @@
         margin: 0 auto;
         display: flex;
         align-items: flex-end;
-        gap: 1rem;
+        gap: 0.75rem;
         background: var(--card-bg);
-        padding: 0.5rem 1rem;
+        padding: 0.4rem 0.75rem;
         border-radius: 1rem;
         border: 1px solid var(--glass-border);
       }
@@ -266,12 +384,12 @@
         background: transparent;
         border: none;
         color: var(--text);
-        padding: 0.75rem 0;
+        padding: 0.6rem 0;
         font-size: 1rem;
         font-family: inherit;
         outline: none;
         resize: none;
-        max-height: 200px;
+        max-height: 150px;
         min-height: 24px;
         line-height: 1.5;
       }
@@ -280,18 +398,26 @@
         background: var(--primary);
         color: white;
         border: none;
-        padding: 0.75rem 1.5rem;
+        padding: 0.6rem 1.2rem;
         border-radius: 0.75rem;
         font-weight: 600;
         cursor: pointer;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.2rem;
+        min-height: 44px;
       }
 
       .input-tip {
+        display: none; /* Hide tip on mobile */
         text-align: center;
         font-size: 0.7rem;
         color: var(--text-muted);
         margin-top: 0.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .input-tip {
+          display: block;
+        }
       }
 
       .typing-indicator {
@@ -319,11 +445,17 @@
     </style>
   </head>
   <body>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <!-- AUTH OVERLAY -->
     <div id="auth-overlay">
       <div class="auth-card" id="login-form">
         <h2>Login to Musbi</h2>
-        <input type="email" id="login-email" placeholder="Email" />
+        <input
+          type="email"
+          id="login-email"
+          placeholder="Email"
+          autocomplete="email"
+        />
         <input type="password" id="login-password" placeholder="Password" />
         <button onclick="handleAuth('login')">Login</button>
         <div class="auth-toggle">
@@ -332,7 +464,12 @@
       </div>
       <div class="auth-card hidden" id="register-form">
         <h2>Join Musbi</h2>
-        <input type="email" id="register-email" placeholder="Email" />
+        <input
+          type="email"
+          id="register-email"
+          placeholder="Email"
+          autocomplete="email"
+        />
         <input type="password" id="register-password" placeholder="Password" />
         <button onclick="handleAuth('register')">Register</button>
         <div class="auth-toggle">
@@ -343,14 +480,49 @@
 
     <!-- SIDEBAR -->
     <div id="sidebar" class="hidden">
-      <button class="new-chat-btn" onclick="createNewChat()">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; md:display:none;"
+      >
+        <h2
+          style="
+            font-family: &quot;Outfit&quot;, sans-serif;
+            font-size: 1.2rem;
+            color: var(--primary);
+          "
+        >
+          Menu
+        </h2>
+        <button
+          class="menu-toggle"
+          onclick="toggleSidebar()"
+          style="margin: 0; padding: 0.25rem"
+        >
+          ✕
+        </button>
+      </div>
+      <button
+        class="new-chat-btn"
+        onclick="
+          createNewChat();
+          if (window.innerWidth < 768) toggleSidebar();
+        "
+      >
         <span>+</span> New Chat
       </button>
       <div class="chat-list" id="chat-list">
         <!-- Chats populated here -->
       </div>
       <div class="user-info">
-        <span id="user-display">user@example.com</span>
+        <span
+          id="user-display"
+          style="
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 150px;
+          "
+          >user@example.com</span
+        >
         <span class="logout-btn" onclick="logout()">Logout</span>
       </div>
     </div>
@@ -358,13 +530,25 @@
     <!-- MAIN CONTENT -->
     <div id="main-content" class="hidden">
       <header>
-        <h1>Musbi Mentorship</h1>
-        <div style="display: flex; gap: 1rem; align-items: center">
+        <div style="display: flex; align-items: center">
+          <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+          <h1>Musbi Mentorship</h1>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center">
           <label
             for="file-upload"
-            style="cursor: pointer; font-size: 0.8rem; color: var(--text-muted)"
+            style="
+              cursor: pointer;
+              font-size: 0.8rem;
+              color: var(--text-muted);
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
+              padding: 0.5rem;
+            "
           >
-            📁 Upload Doc
+            <span style="font-size: 1.2rem">📁</span>
+            <span class="desktop-only">Upload Doc</span>
             <input
               type="file"
               id="file-upload"
@@ -372,8 +556,17 @@
               style="display: none"
             />
           </label>
-          <div id="status" style="font-size: 0.8rem; color: #4ade80">
-            ● Online
+          <div
+            id="status"
+            style="
+              font-size: 0.8rem;
+              color: #4ade80;
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
+            "
+          >
+            <span>●</span> <span class="desktop-only">Online</span>
           </div>
         </div>
       </header>
@@ -396,10 +589,27 @@
       </div>
     </div>
 
+    <style>
+      @media (max-width: 767px) {
+        .desktop-only {
+          display: none;
+        }
+      }
+    </style>
+
     <script>
       const authOverlay = document.getElementById("auth-overlay");
       const sidebar = document.getElementById("sidebar");
+      const sidebarOverlay = document.getElementById("sidebar-overlay");
       const mainContent = document.getElementById("main-content");
+
+      function toggleSidebar() {
+        sidebar.classList.toggle("open");
+        sidebarOverlay.classList.toggle("visible");
+      }
+
+      sidebarOverlay.onclick = toggleSidebar;
+
       const chatContainer = document.getElementById("chat-container");
       const chatList = document.getElementById("chat-list");
       const userInput = document.getElementById("user-input");
@@ -503,6 +713,7 @@
 
       async function selectChat(chatId) {
         currentChatId = chatId;
+        if (window.innerWidth < 768) toggleSidebar();
         document
           .querySelectorAll(".chat-item")
           .forEach((i) => i.classList.remove("active"));
